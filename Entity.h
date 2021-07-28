@@ -1,3 +1,4 @@
+#pragma once
 #define GL_SILENCE_DEPRECATION
 
 #ifdef _WINDOWS
@@ -6,6 +7,7 @@
 
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL.h>
+#include "Map.h"
 #include <SDL_opengl.h>
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -57,8 +59,10 @@ public:
 	bool lost = false;
 	int enemy_num = 3;
 	Entity();
-
-	void Update(float deltaTime, Entity *player, Entity *platforms,Entity *enemy,  int PLATFORM_COUNT, int ENEMY_COUNT );
+	void CheckCollisionsX(Map* map);
+	void CheckCollisionsY(Map* map);
+ 
+	void Update(float deltaTime, Entity *player, Entity* objects, int objectCount, Map *map);
 	void Render(ShaderProgram* program);
 	void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
 	bool CheckCollision(Entity* other);
