@@ -1,9 +1,9 @@
-#include "Level3.h"
-#define LEVEL3_WIDTH 28
-#define LEVEL3_HEIGHT 8
+#include "Lost.h"
+#define Lost_WIDTH 28
+#define Lost_HEIGHT 8
 
-#define LEVEL3_ENEMYCOUNT 3
-unsigned int level3_data[] =
+#define Lost_ENEMYCOUNT 3
+unsigned int Lost_data[] =
 {
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -14,18 +14,18 @@ unsigned int level3_data[] =
  3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  3, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3
 };
-void Level3::Initialize() {
+void Lost::Initialize() {
 
     state.nextScene = -1;
 
-    GLuint mapTextureID = Util::LoadTexture("marble.png");
-    state.map = new Map(LEVEL3_WIDTH, LEVEL3_HEIGHT, level3_data, mapTextureID, 1.0f, 8, 8);
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    GLuint mapTextureID = Util::LoadTexture("blue.png");
+    state.map = new Map(Lost_WIDTH, Lost_HEIGHT, Lost_data, mapTextureID, 1.0f, 8, 8);
+    glClearColor(0.0f, 0.9f, 0.9f, 1.0f);
 
     //player set up
     state.player = new Entity();
     state.player->entityType = PLAYER;
-    state.player->position = glm::vec3(3, 0, 0);
+    state.player->position = glm::vec3(3, -4, 0);
     state.player->movement = glm::vec3(0);
     state.player->acceleration = glm::vec3(0, -9.97f, 0);//gravity
     state.player->speed = 1.0f;
@@ -46,7 +46,7 @@ void Level3::Initialize() {
     //state.player->height = 0.95f;
     state.player->width = 1.0f;
     state.player->jumpPower = 6.0f;
-    state.player->bottom = true;
+    state.player->restart = true;
 
 
 
@@ -59,7 +59,7 @@ void Level3::Initialize() {
 
 
     //enemy setup
-    state.enemy = new Entity[LEVEL3_ENEMYCOUNT];
+    state.enemy = new Entity[Lost_ENEMYCOUNT];
     GLuint enemyTextureID = Util::LoadTexture("bad.png");
 
 
@@ -99,27 +99,28 @@ void Level3::Initialize() {
     state.enemy[2].speed = 1.0f;
     state.enemy[2].height = 0.8f;
     state.enemy[2].width = 0.8f;
-    for (int i = 0; i < LEVEL3_ENEMYCOUNT; i++) {
+    for (int i = 0; i < Lost_ENEMYCOUNT; i++) {
         state.enemy[i].isActive = false;
         //state.enemy[i].Update(0,NULL, NULL, 0, 0);
     }
     // Move over all of the player and enemy code from initialization.
 }
-void Level3::Update(float deltaTime) {
-    state.player->Update(deltaTime, state.player, state.enemy, LEVEL3_ENEMYCOUNT, state.map);
-    if (state.player->position.x >= 12.5 ) {
+void Lost::Update(float deltaTime) {
+    state.player->Update(deltaTime, state.player, state.enemy, Lost_ENEMYCOUNT, state.map);
+    if (state.player->position.x >= 12.5) {
         state.nextScene = 3;
     }
 }
-void Level3::Render(ShaderProgram* program) {
+void Lost::Render(ShaderProgram* program) {
     GLuint fontTextureID = Util::LoadTexture("font2.png");
-    Util::DrawText(program, fontTextureID, "You lost one life.", 0.4f, 0.1f, glm::vec3(1, -5, 0));
-    Util::DrawText(program, fontTextureID, "Press B to revive.", 0.4f, 0.1f, glm::vec3(1, -4, 0));
+    Util::DrawText(program, fontTextureID, "You lose.", 0.4f, 0.1f, glm::vec3(2, -5, 0));
+    Util::DrawText(program, fontTextureID, "No life left.", 0.4f, 0.1f, glm::vec3(2, -4, 0));
+    Util::DrawText(program, fontTextureID, "Hit 'R' to restart", 0.4f, 0.1f, glm::vec3(2, -3, 0));
     if (state.player->lives == 2) {
-        Util::DrawText(program, fontTextureID, "2 lives left.", 0.4f, 0.1f, glm::vec3(1, -6, 0));
+        Util::DrawText(program, fontTextureID, "2 lives left", 0.8f, 0.1f, glm::vec3(2, -6, 0));
     }
     else if (state.player->lives == 1) {
-        Util::DrawText(program, fontTextureID, "1 life left.", 0.4f, 0.1f, glm::vec3(1, -6, 0));
+        Util::DrawText(program, fontTextureID, "1 life left", 0.8f, 0.1f, glm::vec3(2, -6, 0));
     }
     state.map->Render(program);
     state.player->Render(program);

@@ -128,19 +128,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp" />
+    <ClCompile Include="FinalLevel.cpp" />
     <ClCompile Include="Level1.cpp" />
     <ClCompile Include="Level2.cpp" />
+    <ClCompile Include="Lost.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Level3.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="FinalLevel.h" />
+    <ClInclude Include="Lost.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Level1.h" />
     <ClInclude Include="Level2.h" />
     <ClInclude Include="Level3.h" />
@@ -148,6 +155,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Win.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="glew32.dll">

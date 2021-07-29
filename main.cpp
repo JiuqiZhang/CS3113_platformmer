@@ -18,10 +18,14 @@
 #include "Map.h"
 #include "Entity.h"
 #include "Scene.h"
+#include "Menu.h"
 #include "Level1.h"
 #include "Level2.h"
 #include "Level3.h"
+#include "Lost.h"
 #include "Effects.h"
+#include "FinalLevel.h"
+#include "Win.h"
 Mix_Music *music;
 Mix_Chunk *bounce;
 Mix_Chunk *hit;
@@ -40,12 +44,16 @@ ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 
 Scene *currentScene;
-Scene *sceneList[3];
+Scene *sceneList[7];
 
 
-void SwitchToScene(Scene* scene) {
+void SwitchToScene(Scene* scene, int lives) {
+    
     currentScene = scene;
     currentScene->Initialize();
+
+    currentScene->state.player->lives = lives;
+
 }
 
 void DrawText(ShaderProgram* program, GLuint fontTextureID, std::string text, float size, float spacing, glm::vec3 position)
@@ -105,7 +113,7 @@ void DrawText(ShaderProgram* program, GLuint fontTextureID, std::string text, fl
 
 void Initialize() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    displayWindow = SDL_CreateWindow("Texture!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+    displayWindow = SDL_CreateWindow("Find JQZ~", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
     SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
     SDL_GL_MakeCurrent(displayWindow, context);
 
@@ -145,10 +153,14 @@ void Initialize() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Initialize the levels and start at the first one
-    sceneList[0] = new Level1();
-    sceneList[1] = new Level2();
-    sceneList[2] = new Level3();
-    SwitchToScene(sceneList[0]);
+    sceneList[1] = new Level1();
+    sceneList[2] = new Level2();
+    sceneList[3] = new Level3();
+    sceneList[0] = new Menu();
+    sceneList[4] = new Lost();
+    sceneList[5] = new FinalLevel();
+    sceneList[6] = new Win();
+    SwitchToScene(sceneList[0], 3);
 
     effects = new Effects(projectionMatrix, viewMatrix);
     effects->Start(FADEIN, 0.297f);
@@ -178,13 +190,36 @@ void ProcessInput() {
                 if (currentScene->state.player->collidedBottom) {
                     currentScene->state.player->jump = true;
                     Mix_PlayChannel(-1, bounce, 0);
+
                 }
+                
                 break;
+            case SDLK_RETURN:
+                if (currentScene->state.player->menu == true) {
+                    SwitchToScene(sceneList[1], 3);
+                }
+
             }
             break; // SDL_KEYDOWN
         }
     }
+    
+    if (currentScene->state.player->hit) {
+        effects->Start(SHAKE, 4.297f);
+        currentScene->state.player->CheckCollisionsY(currentScene->state.map);
+
+    }
     const Uint8* keys = SDL_GetKeyboardState(NULL);
+    if (keys[SDL_SCANCODE_B]) {
+        if (currentScene->state.player->bottom == true) {
+            SwitchToScene(sceneList[1], currentScene->state.player->lives);
+        }
+    }
+    if (keys[SDL_SCANCODE_R]) {
+        if (currentScene->state.player->restart == true) {
+        SwitchToScene(sceneList[0], 3);
+    }
+    }
     if (keys[SDL_SCANCODE_A]) {
         currentScene->state.player->movement.x = -1.0f;
         currentScene->state.player->animIndices = currentScene->state.player->animLeft;
@@ -265,9 +300,11 @@ void Update() {
         // 
         currentScene->Update(FIXED_TIMESTEP);
 
-        if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
-            //effects->Start(SHAKE, 2.97f);
-        }
+        /*if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
+            if (currentScene->state.enemy->isActive == false && currentScene->state.enemy->shake == true) {
+                effects->Start(SHAKE, 2.97f);
+            
+        }*/
         lastCollidedBottom = currentScene->state.player->collidedBottom;
 
         effects->Update(FIXED_TIMESTEP);
@@ -343,7 +380,8 @@ int main(int argc, char* argv[]) {
         Update();
 
         if (currentScene->state.nextScene >= 0) {
-            SwitchToScene(sceneList[currentScene->state.nextScene]);
+            int live = currentScene->state.player->lives;
+            SwitchToScene(sceneList[currentScene->state.nextScene], live);
             effects->Start(FADEOUT, 0.297f);
             effects->Start(FADEIN, 0.297f);
         }

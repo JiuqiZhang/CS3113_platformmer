@@ -35,6 +35,9 @@ public:
 	float jumpPower = 0;
 	GLuint textureID;
 
+	int lives;
+	bool menu = false;
+	bool bottom = false;
 	glm::mat4 modelMatrix;
 	int *animFront = NULL;
 	int *animLeft = NULL;
@@ -54,10 +57,14 @@ public:
 	bool collidedBottom = false;
 	bool collidedLeft = false;
 	bool collidedRight = false;
+	bool hit = false;
 	bool defeat = false;
 	bool win = false;
 	bool lost = false;
-	int enemy_num = 3;
+	int enemy_num = 1;
+	bool shake = false;
+
+	bool restart = false;
 	Entity();
 	void CheckCollisionsX(Map* map);
 	void CheckCollisionsY(Map* map);

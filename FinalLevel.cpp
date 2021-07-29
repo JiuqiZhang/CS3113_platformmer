@@ -1,27 +1,27 @@
-#include "Level2.h"
-#define LEVEL2_WIDTH 14
-#define LEVEL2_HEIGHT 8
+#include "FinalLevel.h"
+#define FLevel_WIDTH 14
+#define FLevel_HEIGHT 8
 
-#define LEVEL2_ENEMYCOUNT 2
-unsigned int level2_data[] =
+#define FLevel_ENEMYCOUNT 2
+unsigned int FLevel_data[] =
 {
  33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 33, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 33, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 33, 33, 0, 0, 0, 0, 33, 33, 33, 33, 33,0, 0, 33,
- 33, 33, 0, 0, 0, 33, 33, 33, 33, 33, 33, 0, 3, 33,
- 33, 33, 33, 0, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33,
+ 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33,
+ 33, 3, 0, 0, 0, 2, 17, 24, 25, 26, 33, 0, 49, 33,
+ 33, 33, 3, 0, 1, 33, 33, 33, 33, 33, 33, 33, 33, 33,
  33, 33, 33, 0, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33
 };
 
-void Level2::Initialize() {
+void FinalLevel::Initialize() {
 
     state.nextScene = -1;
 
-    GLuint mapTextureID = Util::LoadTexture("marble.png");
-    state.map = new Map(LEVEL2_WIDTH, LEVEL2_HEIGHT, level2_data, mapTextureID, 1.0f, 8, 8);
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    GLuint mapTextureID = Util::LoadTexture("box.png");
+    state.map = new Map(FLevel_WIDTH, FLevel_HEIGHT, FLevel_data, mapTextureID, 1.0f, 8, 8);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     //player set up
     state.player = new Entity();
@@ -60,12 +60,12 @@ void Level2::Initialize() {
 
 
     //enemy setup
-    state.enemy = new Entity[LEVEL2_ENEMYCOUNT];
+    state.enemy = new Entity[FLevel_ENEMYCOUNT];
 
 
-    state.enemy[0].textureID = Util::LoadTexture("bad.png");
+    state.enemy[0].textureID = Util::LoadTexture("ball.png");
     state.enemy[0].entityType = ENEMI;
-    state.enemy[0].position = glm::vec3(2, 1, 0);
+    state.enemy[0].position = glm::vec3(2.5, 1, 0);
     state.enemy[0].movement = glm::vec3(0);
     state.enemy[0].acceleration = glm::vec3(0, -9.97f, 0);
 
@@ -74,7 +74,7 @@ void Level2::Initialize() {
     state.enemy[0].height = 0.8f;
     state.enemy[0].width = 0.65f;
 
-    state.enemy[1].textureID = Util::LoadTexture("bad.png");
+    state.enemy[1].textureID = Util::LoadTexture("ball.png");
     state.enemy[1].entityType = ENEMI;
     state.enemy[1].position = glm::vec3(11, 1, 0);
     state.enemy[1].movement = glm::vec3(0);
@@ -88,44 +88,46 @@ void Level2::Initialize() {
 
     // Move over all of the player and enemy code from initialization.
 }
-void Level2::Update(float deltaTime) {
-    state.player->Update(deltaTime, state.player, state.enemy, LEVEL2_ENEMYCOUNT, state.map);
-    for (int i = 0; i < LEVEL2_ENEMYCOUNT; i++) {
-        state.enemy[i].Update(deltaTime, state.player, state.enemy, LEVEL2_ENEMYCOUNT, state.map);
+void FinalLevel::Update(float deltaTime) {
+    state.player->Update(deltaTime, state.player, state.enemy, FLevel_ENEMYCOUNT, state.map);
+    for (int i = 0; i < FLevel_ENEMYCOUNT; i++) {
+        state.enemy[i].Update(deltaTime, state.player, state.enemy, FLevel_ENEMYCOUNT, state.map);
     }
 
     //state.enemy->Update(deltaTime, state.player, state.enemy, LEVEL1_ENEMYCOUNT, state.map);
 
     if (state.player->position.x >= 11.5 && state.player->position.y >= -5 && state.player->position.y <= -4) {
-        state.nextScene = 5;
+        state.nextScene = 6;
     }
     if (state.player->position.y <= -7.0f) {
         state.player->lives -= 1;
         state.nextScene = 3;
     }
-    else if(state.player->isActive == false) {
+    else if (state.player->isActive == false) {
         state.nextScene = 3;
         state.player->lives -= 1;
 
     }
-    state.player->ifHit(state.enemy, LEVEL2_ENEMYCOUNT);
-    state.player->CheckCollisionsY(state.enemy, LEVEL2_ENEMYCOUNT);
+    state.player->ifHit(state.enemy, FLevel_ENEMYCOUNT);
+    state.player->CheckCollisionsY(state.enemy, FLevel_ENEMYCOUNT);
 
     if (state.player->lives <= 0) {
         state.nextScene = 4;
     }
-    
+
 }
-void Level2::Render(ShaderProgram* program) {
+void FinalLevel::Render(ShaderProgram* program) {
 
     state.map->Render(program);
     state.player->Render(program);
     GLuint fontTextureID = Util::LoadTexture("font1.png");
     GLuint fontTexture2ID = Util::LoadTexture("font2.png");
-    Util::DrawText(program, fontTexture2ID, "Level 2", 0.597f, 0.0297f, glm::vec3(2, -2.5, 0));
-    Util::DrawText(program, fontTexture2ID, "Find Q", 0.4f, 0.0297f, glm::vec3(2, -4.2, 0));
+    Util::DrawText(program, fontTexture2ID, "Level 3", 0.597f, 0.0297f, glm::vec3(2, -2.5, 0));
+    Util::DrawText(program, fontTexture2ID, "Don't get fooled by the camouflage", 0.597f, 0.0297f, glm::vec3(2, -2.5, 0));
 
-    for (int i = 0; i < LEVEL2_ENEMYCOUNT; i++) {
+    Util::DrawText(program, fontTexture2ID, "Find Z", 0.4f, 0.0297f, glm::vec3(2, -4.2, 0));
+
+    for (int i = 0; i < FLevel_ENEMYCOUNT; i++) {
         state.enemy[i].Render(program);
     }
 }

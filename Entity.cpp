@@ -14,12 +14,15 @@ Entity::Entity()
 
 bool Entity::CheckCollision(Entity* other)
 {
-    if (isActive == false or other->isActive == false) return false;
+    if (other == this) return false;
+    if (other->entityType == ENEMI) {
+        if (isActive == false or other->isActive == false) return false;
+    }
     float xdist = fabs(position.x - other->position.x) - ((width + other->width) / 2.0f);
     float ydist = fabs(position.y - other->position.y) - ((height + other->height) / 2.0f);
     if (xdist < 0 && ydist < 0)
     {
-        //lastCollision = other->entityType;
+
         return true;
     }
 
@@ -41,13 +44,17 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
                 velocity.y = 0;
                 collidedTop = true;
             }
-            else if (velocity.y <= 0) {
+            else if (velocity.y < 0) {
                 position.y += penetrationY;
                 velocity.y = 0;
                 collidedBottom = true;
-                if (objects->aiType == ENEMI) {
+                if (objects->entityType == ENEMI){
                     defeat = true;
+                    hit = true;
+
+                    objects->isActive == false;
                 }
+                hit = false;
             }
         }
     }
@@ -59,11 +66,13 @@ void Entity::ifHit(Entity* enemies, int enemyCount) {
         Entity* enemy = &enemies[i];
 
         if (CheckCollision(enemy)) {
-            if (velocity.y < 0) {       
-                if (enemy->position.y < position.y) {
+            if (velocity.y <= 0) {       
+                if (enemy->position.y <= position.y) {
                     defeat = true;
                     enemy->isActive = false;
                     enemy_num -= 1;
+
+                    hit = true;
                     return;
                 }
             }
@@ -87,7 +96,7 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
                 position.x -= penetrationX;
                 velocity.x = 0;
                 collidedRight = true;
-                if (objects->aiType == ENEMI) {
+                if (objects->entityType == ENEMI) {
                     isActive = false;
                 }
             }
@@ -95,7 +104,7 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
                 position.x += penetrationX;
                 velocity.x = 0;
                 collidedLeft = true;
-                if (objects->aiType == ENEMI) {
+                if (objects->entityType == ENEMI) {
                     isActive = false;
                 }
             }
@@ -158,16 +167,19 @@ void Entity::CheckCollisionsY(Map* map)
         position.y += penetration_y;
         velocity.y = 0;
         collidedBottom = true;
+        hit = false;
     }
     else if (map->IsSolid(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {
         position.y += penetration_y;
         velocity.y = 0;
         collidedBottom = true;
+        hit = false;
     }
     else if (map->IsSolid(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {
         position.y += penetration_y;
         velocity.y = 0;
         collidedBottom = true;
+        hit = false;
     }
 }
 
@@ -185,7 +197,7 @@ void Entity::AIPatrol() {
     }
 }
 void Entity::AIJump(Entity* player) {
-    if (position.y <= -1.7f) {
+    if (position.y <= -5.0f) {
         velocity.y = 4.0;
     }
     
