@@ -113,14 +113,10 @@ void Menu::Render(ShaderProgram* program) {
     Util::DrawText(program, fontTexture2ID, "3 lives", 0.4f, 0.1f, glm::vec3(3.25, -4, 0));
 
     Util::DrawText(program, fontTexture2ID, "Press 'ENTER' to start.", 0.297f, 0.1f, glm::vec3(0.8, -5, 0));
+    Util::DrawText(program, fontTexture2ID, "use 'A, D' to move.", 0.297f, 0.1f, glm::vec3(0.8, -6, 0));
 
     //Util::DrawText(program, fontTextureID, "Press B to revive.", 0.4f, 0.1f, glm::vec3(1, -2, 0));
-    if (state.player->lives == 2) {
-        Util::DrawText(program, fontTextureID, "2 lives left.", 0.4f, 0.1f, glm::vec3(1, -6, 0));
-    }
-    else if (state.player->lives == 1) {
-        Util::DrawText(program, fontTextureID, "1 life left.", 0.4f, 0.1f, glm::vec3(1, -6, 0));
-    }
+
     state.map->Render(program);
     //state.player->Render(program);
 }

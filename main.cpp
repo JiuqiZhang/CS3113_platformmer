@@ -380,8 +380,7 @@ int main(int argc, char* argv[]) {
         Update();
 
         if (currentScene->state.nextScene >= 0) {
-            int live = currentScene->state.player->lives;
-            SwitchToScene(sceneList[currentScene->state.nextScene], live);
+            SwitchToScene(sceneList[currentScene->state.nextScene], currentScene->state.player->lives);
             effects->Start(FADEOUT, 0.297f);
             effects->Start(FADEIN, 0.297f);
         }

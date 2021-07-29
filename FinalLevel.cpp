@@ -123,7 +123,7 @@ void FinalLevel::Render(ShaderProgram* program) {
     GLuint fontTextureID = Util::LoadTexture("font1.png");
     GLuint fontTexture2ID = Util::LoadTexture("font2.png");
     Util::DrawText(program, fontTexture2ID, "Level 3", 0.597f, 0.0297f, glm::vec3(2, -2.5, 0));
-    Util::DrawText(program, fontTexture2ID, "Don't get fooled by the camouflage", 0.597f, 0.0297f, glm::vec3(2, -2.5, 0));
+    Util::DrawText(program, fontTexture2ID, "Don't get fooled by the camouflage", 0.2f, 0.0297f, glm::vec3(2, -3.3, 0));
 
     Util::DrawText(program, fontTexture2ID, "Find Z", 0.4f, 0.0297f, glm::vec3(2, -4.2, 0));
 
